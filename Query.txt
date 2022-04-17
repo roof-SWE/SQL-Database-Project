@@ -1,0 +1,123 @@
+CREATE DATABASE store;
+
+USE store;
+-- -------------------[ Tables ]---------------------------
+CREATE TABLE countries(
+code INT PRIMARY KEY ,
+name VARCHAR(20) ,
+continent_name VARCHAR(20) 
+);
+
+CREATE TABLE users(
+id INT PRIMARY KEY ,
+full_name VARCHAR(20) ,
+email VARCHAR(20) ,
+gender CHAR(1) ,
+date_of_brith VARCHAR(15) ,
+country_code INT
+);
+
+CREATE TABLE orders(
+id INT PRIMARY KEY ,
+user_id INT ,
+status VARCHAR(6) 
+);
+
+CREATE TABLE order_products(
+order_id INT  ,
+product_id INT ,
+quantity INT 
+);
+
+CREATE TABLE products(
+id INT PRIMARY KEY ,
+name VARCHAR(10) ,
+price INT ,
+status VARCHAR(10) 
+);
+-- -------------------[ CONNECTIONS ]---------------------------
+ALTER TABLE users
+ADD foreign key (country_code) references countries(code);
+
+ALTER TABLE orders
+ADD foreign key (user_id) references users(id);
+
+ALTER TABLE order_products
+ADD foreign key (order_id) references orders (id);
+
+ALTER TABLE order_products
+ADD foreign key (product_id) references products (id);
+
+-- -------------------[ CONSTRAINT ]---------------------------
+ALTER TABLE countries
+ADD UNIQUE (name);
+
+ALTER TABLE countries
+MODIFY continent_name VARCHAR(20) NOT NULL;
+
+ALTER TABLE users
+ADD UNIQUE (email);
+
+ALTER TABLE users
+ADD CHECK (gender in ('m' , 'f'));
+
+ALTER TABLE orders
+ADD CHECK (status in ('start' , 'finish'));
+
+ALTER TABLE order_products
+ALTER quantity SET DEFAULT 0;
+
+ALTER TABLE products
+ALTER price SET DEFAULT 0;
+
+ALTER TABLE products
+MODIFY name VARCHAR(10) NOT NULL;
+
+ALTER TABLE products
+ADD CHECK (status in ('valid' , 'expired'));
+
+ -- -------------------[ BOUNS ]---------------------------
+ALTER TABLE users
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE products
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE orders
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ -- -------------------[ DML ]---------------------------
+ 
+ INSERT INTO countries
+VALUES(966,"Saudi Arabia","Food");
+
+ INSERT INTO countries
+VALUES(20,"United Arab Emirates","clothes");
+
+ INSERT INTO users (id,full_name,email,gender,date_of_brith,country_code)
+VALUES(1,"Rahaf ALzakary","Rahaf@gmail.com",'f',"01/01/1999",966);
+
+ INSERT INTO orders (id,user_id,status)
+VALUES(1,1,'start');
+
+INSERT INTO products (id,name,price,status)
+VALUES(1,"Apple",1,'valid');
+
+INSERT INTO products (id,name,price,status)
+VALUES(2,"Orange",2,'expired');
+
+INSERT INTO order_products
+VALUES(1,1,20);
+
+UPDATE countries
+SET code=971
+WHERE name='United Arab Emirates';
+
+DELETE FROM products WHERE id=2;
+
+
+-- -------------------[ SELECT ]---------------------------
+
+show columns from orders;
+
+select * from products;
